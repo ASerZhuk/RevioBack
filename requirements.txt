@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+sqlalchemy
+aiosqlite
+alembic
+pwdlib[argon2]
+PyJWT
+google-auth[requests]
