@@ -194,6 +194,18 @@ DEFAULT_CONFIG: list[dict] = [
         "description": "Начальное количество токенов для нового пользователя",
         "is_secret": False,
     },
+    {
+        "key": "app.show_webview_debug",
+        "value": json.dumps(False),
+        "description": "Показывать отладочный WebView при парсинге",
+        "is_secret": False,
+    },
+    {
+        "key": "app.rewarded_ads_enabled",
+        "value": json.dumps(False),
+        "description": "Включить рекламные ролики (VK Ads)",
+        "is_secret": False,
+    },
 ]
 
 
