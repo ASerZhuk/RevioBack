@@ -38,13 +38,19 @@ async def get_user_by_email(session: AsyncSession, email: str) -> User | None:
     return result.scalar_one_or_none()
 
 
-async def create_user(session: AsyncSession, username: str, password: str) -> User:
+async def get_user_by_device_id(session: AsyncSession, device_id: str) -> User | None:
+    result = await session.execute(select(User).where(User.device_id == device_id))
+    return result.scalar_one_or_none()
+
+
+async def create_user(session: AsyncSession, username: str, password: str, device_id: str | None = None) -> User:
     user = User(
         username=username,
         email=username,
         password_hash=hash_password(password),
         auth_provider="password",
         tokens=await _get_initial_tokens(session),
+        device_id=device_id,
     )
     session.add(user)
     await session.commit()
@@ -56,6 +62,7 @@ async def create_google_user(
     session: AsyncSession,
     email: str,
     google_sub: str,
+    device_id: str | None = None,
 ) -> User:
     user = User(
         username=email,
@@ -63,6 +70,7 @@ async def create_google_user(
         google_sub=google_sub,
         auth_provider="google",
         tokens=await _get_initial_tokens(session),
+        device_id=device_id,
     )
     session.add(user)
     await session.commit()

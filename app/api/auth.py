@@ -11,6 +11,7 @@ from app.crud.users import (
     authenticate_user,
     create_google_user,
     create_user,
+    get_user_by_device_id,
     get_user_by_email,
     get_user_by_google_sub,
     get_user_by_username,
@@ -27,6 +28,17 @@ def build_token_response(user: User) -> TokenResponse:
     return TokenResponse(access_token=create_access_token(user.id), user=user)
 
 
+async def _check_device_id(session: AsyncSession, device_id: str | None) -> None:
+    if not device_id:
+        return
+    existing = await get_user_by_device_id(session, device_id)
+    if existing is not None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Это устройство уже привязано к другому аккаунту",
+        )
+
+
 @router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
 async def register(
     payload: UserCreate,
@@ -36,7 +48,8 @@ async def register(
     if existing_user is not None:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Username already exists")
 
-    user = await create_user(session, payload.username, payload.password)
+    await _check_device_id(session, payload.device_id)
+    user = await create_user(session, payload.username, payload.password, payload.device_id)
     return build_token_response(user)
 
 
@@ -62,6 +75,8 @@ async def google_login(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Google token")
 
     email, google_sub = google_user
+
+    # существующий пользователь — просто логин, устройство не проверяем
     user = await get_user_by_google_sub(session, google_sub)
     if user is not None:
         return build_token_response(user)
@@ -76,7 +91,9 @@ async def google_login(
         user = await attach_google_to_user(session, user, email, google_sub)
         return build_token_response(user)
 
-    user = await create_google_user(session, email, google_sub)
+    # новый пользователь — проверяем устройство
+    await _check_device_id(session, payload.device_id)
+    user = await create_google_user(session, email, google_sub, payload.device_id)
     return build_token_response(user)
 
 

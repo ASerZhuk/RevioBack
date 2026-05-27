@@ -4,6 +4,7 @@ from pydantic import BaseModel, ConfigDict, Field
 class UserCreate(BaseModel):
     username: str = Field(min_length=3, max_length=255)
     password: str = Field(min_length=8, max_length=128)
+    device_id: str | None = None
 
 
 class UserLogin(BaseModel):
@@ -13,6 +14,7 @@ class UserLogin(BaseModel):
 
 class GoogleLogin(BaseModel):
     id_token: str
+    device_id: str | None = None
 
 
 class UserRead(BaseModel):

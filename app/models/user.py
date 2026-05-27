@@ -14,6 +14,7 @@ class User(Base):
     email: Mapped[str | None] = mapped_column(String(255), unique=True, index=True)
     google_sub: Mapped[str | None] = mapped_column(String(255), unique=True, index=True)
     auth_provider: Mapped[str] = mapped_column(String(32), default="password", server_default="password")
+    device_id: Mapped[str | None] = mapped_column(String(255), unique=True, index=True, nullable=True)
     password_hash: Mapped[str | None] = mapped_column(String(255))
     tokens: Mapped[int] = mapped_column(Integer, default=3, server_default="3")
     is_admin: Mapped[bool] = mapped_column(default=False, server_default="0")
