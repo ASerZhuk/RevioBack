@@ -20,6 +20,7 @@ class UserRead(BaseModel):
     username: str
     email: str | None
     tokens: int
+    is_admin: bool = False
 
     model_config = ConfigDict(from_attributes=True)
 

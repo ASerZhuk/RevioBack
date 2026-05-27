@@ -8,3 +8,4 @@ alembic
 pwdlib[argon2]
 PyJWT
 google-auth[requests]
+httpx

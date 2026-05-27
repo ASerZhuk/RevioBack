@@ -12,6 +12,9 @@ class Settings(BaseSettings):
     google_client_id: str = "164747175175-l8r2aq2moiiiv1vkh933vjjv8f0di5de.apps.googleusercontent.com"
     google_android_client_id: str | None = None
     initial_user_tokens: int = 3
+    telegram_bot_token: str | None = None
+    telegram_chat_id: str | None = None
+    admin_secret: str = "change-admin-secret"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
