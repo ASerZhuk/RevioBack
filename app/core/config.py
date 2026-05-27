@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     initial_user_tokens: int = 3
     telegram_bot_token: str | None = None
     telegram_chat_id: str | None = None
+    telegram_proxy_url: str | None = None  # e.g. "socks5://user:pass@host:port" or "http://host:port"
     admin_secret: str = "change-admin-secret"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")

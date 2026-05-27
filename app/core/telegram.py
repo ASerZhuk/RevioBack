@@ -44,14 +44,15 @@ async def send_telegram(message: str) -> None:
 
     url = f"https://api.telegram.org/bot{token}/sendMessage"
     try:
-        async with httpx.AsyncClient(timeout=5) as client:
+        proxy = settings.telegram_proxy_url or None
+        async with httpx.AsyncClient(timeout=10, proxy=proxy) as client:
             await client.post(url, json={
                 "chat_id": chat,
                 "text": message[:4096],
                 "parse_mode": "HTML",
             })
     except Exception as exc:
-        logger.warning("Telegram notification failed: %s", exc)
+        logger.warning("Telegram notification failed: %s", exc, exc_info=True)
 
 
 async def notify_error(source: str, error_type: str, message: str, context: str | None = None) -> None:
